@@ -2,7 +2,7 @@
 
 #include "Game.h"
 
-class Actor
+class Actor 
 {
 public:
 	Actor(string filename, float x, float y, int width, int height, Game* game);
