@@ -4,14 +4,19 @@ NormalEnemy::NormalEnemy(float x, float y, Game* game)
 
 	state = game->stateMoving;
 
-	aDying = new Animation("res/enemigo_morir.png", width, height,
-		280, 40, 6, 8, false, game);
-	aMoving = new Animation("res/enemigo_movimiento.png", width, height,
-		108, 40, 6, 3, true, game);
-	animation = aMoving;
+	aDyingRight = new Animation("res/Soldado Enemigo/Derecha/animacion_derrota_derecha.png", width, height,
+		550, 50, 6, 11, false, game);
+	aDyingLeft = new Animation("res/Soldado Enemigo/Izquierda/animacion_derrota_izquierda.png", width, height,
+		550, 50, 6, 11, false, game);
 
-	vx = 1;
-	vxIntelligence = -1;
+	aMovingRight = new Animation("res/Soldado Enemigo/Derecha/animacion_corre_derecha.png", width, height,
+		200, 50, 6, 4, true, game);
+	aMovingLeft = new Animation("res/Soldado Enemigo/Izquierda/animacion_corre_izquierda.png", width, height,
+		200, 50, 6, 4, true, game);
+	animation = aMovingLeft;
+
+	vx = 2;
+	vxIntelligence = -2;
 	vx = vxIntelligence;
 
 }
@@ -19,6 +24,14 @@ NormalEnemy::NormalEnemy(float x, float y, Game* game)
 void NormalEnemy::update() {
 	// Actualizar la animación
 	bool endAnimation = animation->update();
+
+	// Establecer orientación
+	if (vx > 0) {
+		orientation = game->orientationRight;
+	}
+	if (vx < 0) {
+		orientation = game->orientationLeft;
+	}
 
 	// Acabo la animación, no sabemos cual
 	if (endAnimation) {
@@ -30,10 +43,20 @@ void NormalEnemy::update() {
 
 
 	if (state == game->stateMoving) {
-		animation = aMoving;
+		if (orientation == game->orientationRight) {
+			animation = aMovingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aMovingLeft;
+		}
 	}
 	if (state == game->stateDying) {
-		animation = aDying;
+		if (orientation == game->orientationRight) {
+			animation = aDyingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aDyingLeft;
+		}
 	}
 
 	// Establecer velocidad

@@ -6,7 +6,7 @@
 
 #include "Enemy.h"
 #include "NormalEnemy.h"
-#include "ShootEnemy.h"
+#include "JumpEnemy.h"
 #include "Projectile.h"
 #include "Text.h"
 #include "Tile.h"

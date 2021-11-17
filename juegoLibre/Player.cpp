@@ -7,25 +7,23 @@ Player::Player(float x, float y, Game* game)
 	orientation = game->orientationRight;
 	state = game->stateMoving;
 	audioShoot = new Audio("res/efecto_disparo.wav", false);
-	aShootingRight = new Animation("res/jugador_disparando_derecha.png",
-		width, height, 160, 40, 6, 4, false, game);
-	aShootingLeft = new Animation("res/jugador_disparando_izquierda.png",
-		width, height, 160, 40, 6, 4, false, game);
+	aShootingRight = new Animation("res/Soldado Pistola/Derecha/animacion_disparo_derecha.png",
+		width, height, 200, 50, 6, 4, false, game);
+	aShootingLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_disparo_izquierda.png",
+		width, height, 200, 50, 6, 4, false, game);
 
-	aJumpingRight = new Animation("res/jugador_saltando_derecha.png",
-		width, height, 160, 40, 6, 4, true, game);
-	aJumpingLeft = new Animation("res/jugador_saltando_izquierda.png",
-		width, height, 160, 40, 6, 4, true, game);
-	aIdleRight = new Animation("res/jugador_idle_derecha.png", width, height,
-		320, 40, 6, 8, true, game);
-	aIdleLeft = new Animation("res/jugador_idle_izquierda.png", width, height,
-		320, 40, 6, 8, true, game);
-	aRunningRight = new Animation("res/jugador_corriendo_derecha.png", width, height,
-		320, 40, 6, 8, true, game);
-	aRunningLeft = new Animation("res/jugador_corriendo_izquierda.png", width, height,
-		320, 40, 6, 8, true, game);
-	aRunningLeft = new Animation("res/jugador_corriendo_izquierda.png", width, height,
-		320, 40, 6, 8, true, game);
+	aJumpingRight = new Animation("res/Soldado Pistola/Derecha/animacion_salto_derecha.png",
+		width, height, 200, 50, 6, 4, true, game);
+	aJumpingLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_salto_izquierda.png",
+		width, height, 200, 50, 6, 4, true, game);
+	aIdleRight = new Animation("res/Soldado Pistola/Derecha/animacion_quieto_derecha.png", width, height,
+		500, 50, 6, 10, true, game);
+	aIdleLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_quieto_izquierda.png", width, height,
+		500, 50, 6, 10, true, game);
+	aRunningRight = new Animation("res/Soldado Pistola/Derecha/animacion_corre_derecha.png", width, height,
+		200, 50, 6, 4, true, game);
+	aRunningLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_corre_izquierda.png", width, height,
+		200, 50, 6, 4, true, game);
 
 	animation = aIdleRight;
 
@@ -65,33 +63,6 @@ void Player::update() {
 		}
 	}
 
-
-	// Establecer orientación
-	if (vx > 0) {
-		orientation = game->orientationRight;
-	}
-	if (vx < 0) {
-		orientation = game->orientationLeft;
-	}
-
-
-	// Selección de animación basada en estados
-	if (state == game->stateJumping) {
-		if (orientation == game->orientationRight) {
-			animation = aJumpingRight;
-		}
-		if (orientation == game->orientationLeft) {
-			animation = aJumpingLeft;
-		}
-	}
-	if (state == game->stateShooting) {
-		if (orientation == game->orientationRight) {
-			animation = aShootingRight;
-		}
-		if (orientation == game->orientationLeft) {
-			animation = aShootingLeft;
-		}
-	}
 	if (state == game->stateMoving) {
 		if (vx != 0) {
 			if (orientation == game->orientationRight) {
@@ -111,6 +82,39 @@ void Player::update() {
 		}
 	}
 
+	// Establecer orientación
+	if (vx > 0) {
+		orientation = game->orientationRight;
+	}
+	if (vx < 0) {
+		orientation = game->orientationLeft;
+	}
+
+	// Selección de animación basada en estados
+	if (state == game->stateJumping) {
+		if (orientation == game->orientationRight) {
+			animation = aJumpingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aJumpingLeft;
+		}
+	}
+	if (state == game->stateShooting) {
+		if (orientation == game->orientationRight) {
+			animation = aShootingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aShootingLeft;
+		}
+		if (vx != 0) {
+			if (orientation == game->orientationRight) {
+				animation = aRunningRight;
+			}
+			if (orientation == game->orientationLeft) {
+				animation = aRunningLeft;
+			}
+		}
+	}
 
 	if (shootTime > 0) {
 		shootTime--;
@@ -128,15 +132,21 @@ void Player::moveY(float axis) {
 
 Projectile* Player::shoot() {
 
-	if (shootTime == 0) {
+	if (shootTime == 0 && state!=game->stateShooting &&
+		state != game->stateJumping && vx==0) {
 		state = game->stateShooting;
 		audioShoot->play();
 		aShootingLeft->currentFrame = 0; //"Rebobinar" aniamción
 		aShootingRight->currentFrame = 0; //"Rebobinar" aniamción
 		shootTime = shootCadence;
-		Projectile* projectile = new Projectile("res/disparo_jugador2.png", x, y, game);
+		Projectile* projectile;
+
 		if (orientation == game->orientationLeft) {
+			projectile = new Projectile("res/Soldado Pistola/Izquierda/bala.png", x, y, game);
 			projectile->vx = projectile->vx * -1; // Invertir
+		}
+		else {
+			projectile = new Projectile("res/Soldado Pistola/Derecha/bala.png", x, y, game);
 		}
 		return projectile;
 	}

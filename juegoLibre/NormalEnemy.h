@@ -12,8 +12,10 @@ public:
 
     Projectile* shoot() override;
 
-    Animation* aDying;
-    Animation* aMoving;
-    Animation* animation;
+    int orientation;
+    Animation* aDyingRight;
+    Animation* aDyingLeft;
+    Animation* aMovingRight;
+    Animation* aMovingLeft;
 };
 

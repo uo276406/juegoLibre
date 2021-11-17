@@ -1,18 +1,18 @@
 #pragma once
 #include "Enemy.h"
-class ShootEnemy : public Enemy
+class JumpEnemy : public Enemy
 {
 public:
-    ShootEnemy(float x, float y, Game* game);
+    JumpEnemy(float x, float y, Game* game);
 
     void update() override;
 
     void draw(float scrollX, float scrollY) override;
 
     Animation* animation;
+    Animation* aMoving;
+    Animation* aDying;
 
-    Projectile* shoot() override;
 
-    int cadence;
 };
 
