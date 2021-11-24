@@ -6,7 +6,7 @@ Player::Player(float x, float y, Game* game)
 	onAir = false;
 	orientation = game->orientationRight;
 	state = game->stateMoving;
-	audioShoot = new Audio("res/efecto_disparo.wav", false);
+	audioShoot = new Audio("res/disparo.wav", false);
 	aShootingRight = new Animation("res/Soldado Pistola/Derecha/animacion_disparo_derecha.png",
 		width, height, 200, 50, 6, 4, false, game);
 	aShootingLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_disparo_izquierda.png",
@@ -133,7 +133,7 @@ void Player::moveY(float axis) {
 Projectile* Player::shoot() {
 
 	if (shootTime == 0 && state!=game->stateShooting &&
-		state != game->stateJumping && vx==0) {
+		state != game->stateJumping && vx==0 && shootsAvailable > 0) {
 		state = game->stateShooting;
 		audioShoot->play();
 		aShootingLeft->currentFrame = 0; //"Rebobinar" aniamción
@@ -148,6 +148,7 @@ Projectile* Player::shoot() {
 		else {
 			projectile = new Projectile("res/Soldado Pistola/Derecha/bala.png", x, y, game);
 		}
+		shootsAvailable--;
 		return projectile;
 	}
 	else {

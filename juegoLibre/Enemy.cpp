@@ -7,7 +7,6 @@ Enemy::Enemy(string filename, float x, float y, Game* game)
 
 	state = game->stateMoving;
 
-
 	vx = 1;
 	vxIntelligence = -1;
 	vx = vxIntelligence;

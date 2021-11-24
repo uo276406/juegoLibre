@@ -18,6 +18,7 @@ public:
 	
 	void loseLife();
 	int lifes = 3;
+	int shootsAvailable = 10;
 	int invulnerableTime = 0;
 	
 	bool onAir;

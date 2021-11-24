@@ -69,7 +69,7 @@
     <ClCompile Include="MenuLayer.cpp">
       <Filter>Archivos de origen\Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
+    <ClCompile Include="Mine.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="NormalEnemy.cpp">
@@ -125,7 +125,7 @@
     <ClInclude Include="MenuLayer.h">
       <Filter>Archivos de encabezado\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
+    <ClInclude Include="Mine.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="NormalEnemy.h">

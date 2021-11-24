@@ -9,9 +9,11 @@ public:
 
     void draw(float scrollX, float scrollY) override;
 
-    Animation* animation;
-    Animation* aMoving;
-    Animation* aDying;
+    int orientation;
+    Animation* aDyingRight;
+    Animation* aDyingLeft;
+    Animation* aMovingRight;
+    Animation* aMovingLeft;
 
 
 };

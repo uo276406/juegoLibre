@@ -4,12 +4,16 @@ JumpEnemy::JumpEnemy(float x, float y, Game* game)
 	: Enemy("res/asteroide.png", x, y, game) {
 
 	state = game->stateMoving;
-	aMoving = new Animation("res/Salvaje/salvaje_izquierda.png", width, height,
+	aMovingLeft = new Animation("res/Salvaje/salvaje_izquierda.png", width, height,
 		240, 54, 6, 4, true, game);
-	aDying = new Animation("res/Salvaje/salvaje_muerte.png", width, height,
+	aDyingLeft = new Animation("res/Salvaje/salvaje_muerte.png", width, height,
 		360, 54, 6, 6, false, game);
+	aMovingRight = new Animation("res/Salvaje/enemyrunright.png", width, height,
+		256, 64, 6, 4, true, game);
+	aDyingRight = new Animation("res/Salvaje/enemydieright.png", width, height,
+		384, 64, 6, 6, false, game);
 	
-	animation = aMoving;
+	animation = aMovingLeft;
 
 	vx = 2;
 	vxIntelligence = -2;
@@ -18,7 +22,16 @@ JumpEnemy::JumpEnemy(float x, float y, Game* game)
 
 void JumpEnemy::update() {
 
+	// Actualizar la animación
 	bool endAnimation = animation->update();
+
+	// Establecer orientación
+	if (vx > 0) {
+		orientation = game->orientationRight;
+	}
+	if (vx < 0) {
+		orientation = game->orientationLeft;
+	}
 
 	// Acabo la animación, no sabemos cual
 	if (endAnimation) {
@@ -27,11 +40,23 @@ void JumpEnemy::update() {
 			state = game->stateDead;
 		}
 	}
+
+
 	if (state == game->stateMoving) {
-		animation = aMoving;
+		if (orientation == game->orientationRight) {
+			animation = aMovingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aMovingLeft;
+		}
 	}
 	if (state == game->stateDying) {
-		animation = aDying;
+		if (orientation == game->orientationRight) {
+			animation = aDyingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aDyingLeft;
+		}
 	}
 
 	// Establecer velocidad

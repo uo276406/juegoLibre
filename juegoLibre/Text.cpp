@@ -9,9 +9,9 @@ Text::Text(string content, float x, float y, Game* game) {
 
 void Text::draw() {
 	SDL_Color color;
-	color.r = 255;
-	color.g = 255;
-	color.b = 255;
+	color.r = 0;
+	color.g = 0;
+	color.b = 0;
 	color.a = 255; //transparente
 
 	SDL_Surface* surface = TTF_RenderText_Blended(game->font, content.c_str(), color);
