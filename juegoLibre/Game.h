@@ -36,7 +36,7 @@ public:
 	Layer* gameLayer;
 
 	int currentLevel = 0;
-	int finalLevel = 2;
+	int finalLevel = 1;
 
 	int const stateMoving = 1;
 	int const stateJumping = 2;

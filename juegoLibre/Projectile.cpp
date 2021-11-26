@@ -8,4 +8,5 @@ Projectile::Projectile(string filename,float x, float y, Game* game) :
 
 void Projectile::update() {
 	vy = vy - 1; // La gravedad suma 1 en cada actualización restamos para anularla 
+	lifetime--;
 }

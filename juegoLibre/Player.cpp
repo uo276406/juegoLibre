@@ -7,6 +7,8 @@ Player::Player(float x, float y, Game* game)
 	orientation = game->orientationRight;
 	state = game->stateMoving;
 	audioShoot = new Audio("res/disparo.wav", false);
+	audioKnife = new Audio("res/cuchillo_desenfundar.wav", false);
+
 	aShootingRight = new Animation("res/Soldado Pistola/Derecha/animacion_disparo_derecha.png",
 		width, height, 200, 50, 6, 4, false, game);
 	aShootingLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_disparo_izquierda.png",
@@ -25,12 +27,26 @@ Player::Player(float x, float y, Game* game)
 	aRunningLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_corre_izquierda.png", width, height,
 		200, 50, 6, 4, true, game);
 
+	aDyingRight = new Animation("res/Soldado Pistola/Derecha/animacion_derrota_derecha.png", width, height,
+		1150, 50, 6, 23, false, game);
+	aDyingLeft = new Animation("res/Soldado Pistola/Izquierda/animacion_derrota_izquierda.png", width, height,
+		1150, 50, 6, 23, false, game);
+
+	aKnifeRight = new Animation("res/Soldado Cuchillo/Derecha/animacion_ataque_derecha.png", width, height,
+		300, 50, 6, 6, false, game);
+	aKnifeLeft = new Animation("res/Soldado Cuchillo/Izquierda/animacion_ataque_izquierda.png", width, height,
+		300, 50, 6, 6, false, game);
+
 	animation = aIdleRight;
 
 }
 
 
 void Player::update() {
+	//Se terminan las vidas pasa a morir
+	if (lifes == 0) {
+		state = game->stateDying;
+	}
 	// En el aire y moviéndose, PASA a estar saltando
 	if (onAir && state == game->stateMoving) {
 		state = game->stateJumping;
@@ -39,7 +55,6 @@ void Player::update() {
 	if (!onAir && state == game->stateJumping) {
 		state = game->stateMoving;
 	}
-
 
 	if (invulnerableTime > 0) {
 		invulnerableTime--;
@@ -60,6 +75,19 @@ void Player::update() {
 		// Estaba disparando
 		if (state == game->stateShooting) {
 			state = game->stateMoving;
+		}
+
+		if (state == game->stateDying) {
+			state = game->stateDead;
+		}
+	}
+
+	if (state == game->stateDying) {
+		if (orientation == game->orientationRight) {
+			animation = aDyingRight;
+		}
+		if (orientation == game->orientationLeft) {
+			animation = aDyingLeft;
 		}
 	}
 
@@ -101,10 +129,21 @@ void Player::update() {
 	}
 	if (state == game->stateShooting) {
 		if (orientation == game->orientationRight) {
-			animation = aShootingRight;
+			if (shootsAvailable > 0) {
+				animation = aShootingRight;
+			}
+			else {
+				animation = aKnifeRight;
+			}
 		}
 		if (orientation == game->orientationLeft) {
-			animation = aShootingLeft;
+			if (shootsAvailable > 0) {
+				animation = aShootingLeft;
+			}
+			else {
+				animation = aKnifeLeft;
+			}
+				
 		}
 		if (vx != 0) {
 			if (orientation == game->orientationRight) {
@@ -133,11 +172,19 @@ void Player::moveY(float axis) {
 Projectile* Player::shoot() {
 
 	if (shootTime == 0 && state!=game->stateShooting &&
-		state != game->stateJumping && vx==0 && shootsAvailable > 0) {
+		state != game->stateJumping && vx==0) {
 		state = game->stateShooting;
-		audioShoot->play();
-		aShootingLeft->currentFrame = 0; //"Rebobinar" aniamción
-		aShootingRight->currentFrame = 0; //"Rebobinar" aniamción
+		if (shootsAvailable > 0) {
+			audioShoot->play();
+			shootsAvailable--;
+			aShootingLeft->currentFrame = 0; //"Rebobinar" aniamción
+			aShootingRight->currentFrame = 0; //"Rebobinar" aniamción
+		}
+		else {
+			audioKnife->play();
+			aKnifeLeft->currentFrame = 0; //"Rebobinar" aniamción
+			aKnifeRight->currentFrame = 0; //"Rebobinar" aniamción
+		}
 		shootTime = shootCadence;
 		Projectile* projectile;
 
@@ -148,7 +195,11 @@ Projectile* Player::shoot() {
 		else {
 			projectile = new Projectile("res/Soldado Pistola/Derecha/bala.png", x, y, game);
 		}
-		shootsAvailable--;
+		//Si usa cuchillo
+		if (shootsAvailable <= 0) {
+			projectile->lifetime = 3;
+		}
+
 		return projectile;
 	}
 	else {
@@ -183,4 +234,20 @@ void Player::loseLife() {
 			// 100 actualizaciones 
 		}
 	}
+}
+
+bool Player::isDead() {
+	return state == game->stateDead;
+}
+
+bool Player::isDying() {
+	return state == game->stateDying;
+}
+
+void Player::setDead() {
+	state = game->stateDead;
+}
+
+void Player::setDying() {
+	state = game->stateDying;
 }

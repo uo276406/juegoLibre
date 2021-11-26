@@ -31,6 +31,7 @@ void GameLayer::init() {
 
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
+	mines.clear();
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 }
@@ -167,10 +168,10 @@ void GameLayer::processControls() {
 	}
 
 	// Eje X
-	if (controlMoveX > 0) {
+	if (controlMoveX > 0 && !player->isDying()) {
 		player->moveX(1);
 	}
-	else if (controlMoveX < 0) {
+	else if (controlMoveX < 0 && !player->isDying()) {
 		player->moveX(-1);
 	}
 	else {
@@ -178,10 +179,10 @@ void GameLayer::processControls() {
 	}
 
 	// Eje Y
-	if (controlMoveY > 0) {
+	if (controlMoveY > 0 && !player->isDying()) {
 	
 	}
-	else if (controlMoveY < 0) {
+	else if (controlMoveY < 0 && !player->isDying()) {
 		player->jump();
 	}
 	else {
@@ -262,6 +263,10 @@ void GameLayer::update() {
 		init();
 	}
 
+	if (player->isDead()) {
+		init();
+	}
+
 	// Jugador se cae
 	if (player->y > HEIGHT + 80) {
 		init();
@@ -306,18 +311,18 @@ void GameLayer::update() {
 
 				lifes = player->lifes;
 				textLifes->content = to_string(lifes);
-				
-			if (player->lifes <= 0) {
-				init();
-				return;
-			}
 		}
 	}
 
 	for (auto const& mine : mines) {
-		if (mine->isOverlap(player) && 
-			mine->state == game->stateIdle) {
-			mine->state = game->stateExploding;
+		//Jugador overlapea con una mina
+		if (mine->isOverlap(player) && mine->isIdle()) {
+			mine->setExploding();
+		}
+
+		//Si sigue en contacto con la mina cuando explota se muere el enemigo
+		if (mine->isOverlap(player) && mine->hasExploded()) {
+			player->setDying();
 		}
 	}
 
@@ -326,7 +331,9 @@ void GameLayer::update() {
 	list<Mine*> deleteMines;
 
 	for (auto const& projectile : projectiles) {
-		if (projectile->isInRender(scrollX) == false || projectile->vx == 0) {
+		if (projectile->isInRender(scrollX) == false || 
+			projectile->vx == 0 ||
+			projectile->lifetime < projectile->minLifetimeToBePainted) {
 
 			bool pInList = std::find(deleteProjectiles.begin(),
 				deleteProjectiles.end(),
@@ -339,7 +346,7 @@ void GameLayer::update() {
 	}
 
 	for (auto const& mine : mines) {
-		if (mine->state == game->stateDead) {
+		if (mine->hasExploded()) {
 			bool mInList = std::find(deleteMines.begin(),
 				deleteMines.end(),
 				mine) != deleteMines.end();
@@ -448,7 +455,8 @@ void GameLayer::draw() {
 	}
 
 	for (auto const& projectile : projectiles) {
-		projectile->draw(scrollX, scrollY);
+		if(projectile->lifetime > projectile->minLifetimeToBePainted)
+			projectile->draw(scrollX, scrollY);
 	}
 
 	player->draw(scrollX, scrollY);

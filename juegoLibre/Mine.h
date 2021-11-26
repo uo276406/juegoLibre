@@ -17,6 +17,9 @@ public:
 	float y;
 
 	void update();
+	void setExploding();
+	bool isIdle();
+	bool hasExploded();
 	void draw(float scrollX, float scrollY);
 };
 

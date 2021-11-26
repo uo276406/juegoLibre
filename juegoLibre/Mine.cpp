@@ -13,7 +13,7 @@ Mine::Mine(float x, float y, Game* game) :
 		width, height, 50, 30, 0, 1, false, game);
 
 	exploding = new Animation("res/Mina/animacion_mina_explota.png",
-		width, height, 400, 30, 6, 8, false, game);
+		width, height, 400, 30, 4, 8, false, game);
 
 }
 
@@ -35,4 +35,16 @@ void Mine::update() {
 
 void Mine::draw(float scrollX, float scrollY) {
 	animation->draw(x - scrollX, y - scrollY);
+}
+
+void Mine::setExploding() {
+	state = game->stateExploding;
+}
+
+bool Mine::isIdle() {
+	return state == game->stateIdle;
+}
+
+bool Mine::hasExploded() {
+	return state == game->stateDead;
 }

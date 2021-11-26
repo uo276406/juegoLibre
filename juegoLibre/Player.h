@@ -17,8 +17,12 @@ public:
 	void draw(float scrollX = 0, float scrollY = 0) override; // Va a sobrescribir
 	
 	void loseLife();
+	bool isDead();
+	bool isDying();
+	void setDead();
+	void setDying();
 	int lifes = 3;
-	int shootsAvailable = 10;
+	int shootsAvailable = 5;
 	int invulnerableTime = 0;
 	
 	bool onAir;
@@ -32,8 +36,14 @@ public:
 	Animation* aRunningLeft;
 	Animation* aShootingRight;
 	Animation* aShootingLeft;
+	Animation* aKnifeRight;
+	Animation* aKnifeLeft;
+	Animation* aDyingRight;
+	Animation* aDyingLeft;
+
 	Animation* animation; // Referencia a la animación mostrada
 	Audio* audioShoot;
+	Audio* audioKnife;
 	int shootCadence = 30;
 	int shootTime = 0;
 };
