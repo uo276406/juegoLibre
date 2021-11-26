@@ -14,6 +14,7 @@
 #include "Audio.h"
 #include "Space.h" // importar
 #include "Mine.h"
+#include "SupplyResource.h"
 
 #include "Pad.h"
 
@@ -76,9 +77,16 @@ public:
 	int shoots;
 	Actor* shootsIcon;
 
-	int const pointsToPassLevel = 2;
+	int const pointsToPassLevel = 5;
 
 	list<Mine*> mines;
+
+	list<SupplyResource*> resources;
+	void generateResources();
+	int newResouceTime = 250;
+
+	bool controlGrenade = false;
+	list<Grenade*> grenades;
 
 };
 

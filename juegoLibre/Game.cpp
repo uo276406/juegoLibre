@@ -37,7 +37,7 @@ void Game::loop() {
 		// Controles
 		layer->processControls();
 		// Actualizar elementos
-		layer->update();
+ 		layer->update();
 		// Dibujar
 		layer->draw();
 

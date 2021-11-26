@@ -8,7 +8,6 @@ Mine::Mine(float x, float y, Game* game) :
 
 	audioExplode = new Audio("res/Explosion_11.wav", false);
 
-
 	animation = new Animation("res/Mina/mina.png",
 		width, height, 50, 30, 0, 1, false, game);
 

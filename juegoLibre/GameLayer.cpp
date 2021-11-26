@@ -32,6 +32,8 @@ void GameLayer::init() {
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
 	mines.clear();
+	resources.clear();
+	grenades.clear();
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 }
@@ -149,7 +151,6 @@ void GameLayer::processControls() {
 		if (game->input == game->inputMouse) {
 			mouseToControls(event);
 		}
-
 	}
 	//procesar controles
 	//procesar controles
@@ -164,7 +165,15 @@ void GameLayer::processControls() {
 			space->addDynamicActor(newProjectile);
 			projectiles.push_back(newProjectile);
 		}
-
+	}
+	//Lanzar granada
+	if (controlGrenade) {
+		Grenade* newGrenade = player->throwGrenade();
+		if (newGrenade != NULL) {
+			space->addDynamicActor(newGrenade);
+			grenades.push_back(newGrenade);
+		}
+		controlGrenade = false;
 	}
 
 	// Eje X
@@ -205,6 +214,7 @@ void GameLayer::mouseToControls(SDL_Event event) {
 		if (buttonShoot->containsPoint(motionX, motionY)) {
 			controlShoot = true;
 		}
+	
 		if (buttonJump->containsPoint(motionX, motionY)) {
 			controlMoveY = -1;
 		}
@@ -250,6 +260,21 @@ void GameLayer::mouseToControls(SDL_Event event) {
 	}
 }
 
+void GameLayer::generateResources() {
+	newResouceTime--;
+	if (newResouceTime <= 0 && resources.size() <= 2) {
+
+		int rX = rand() % (((int) scrollX + mapWidth) - (int) scrollX);
+
+		SupplyResource* resource = 
+			new SupplyResource(rX, 0, game);
+		resources.push_back(resource);
+		space->addDynamicActor(resource);
+
+		newResouceTime = 250;
+	}
+}
+
 
 void GameLayer::update() {
 
@@ -276,6 +301,8 @@ void GameLayer::update() {
 	background->update();
 	player->update();
 
+	generateResources();
+
 	for (auto const& enemy : enemies) {
 		enemy->update();
 	}
@@ -284,10 +311,13 @@ void GameLayer::update() {
 		projectile->update();
 	}
 
+	for (auto const& grenade : grenades) {
+		grenade->update();
+	}
+
 	for (auto const& mine : mines) {
 		mine->update();
 	}
-
 
 	for (auto const& enemy : enemies) {
 
@@ -329,6 +359,8 @@ void GameLayer::update() {
 	list<Enemy*> deleteEnemies;
 	list<Projectile*> deleteProjectiles;
 	list<Mine*> deleteMines;
+	list<SupplyResource*> deleteResources;
+	list<Grenade*> deleteGrenades;
 
 	for (auto const& projectile : projectiles) {
 		if (projectile->isInRender(scrollX) == false || 
@@ -341,6 +373,24 @@ void GameLayer::update() {
 
 			if (!pInList) {
 				deleteProjectiles.push_back(projectile);
+			}
+		}
+	}
+
+	//Latas fuera de rango
+	for (auto const& resource : resources) {
+		if (resource->isOverlap(player)) {
+
+			player->reload();
+			shoots = player->shootsAvailable;
+			textShootsAvailable->content = to_string(shoots);
+			
+			bool rInList = std::find(deleteResources.begin(),
+				deleteResources.end(),
+				resource) != deleteResources.end();
+
+			if (!rInList) {
+				deleteResources.push_back(resource);
 			}
 		}
 	}
@@ -379,6 +429,24 @@ void GameLayer::update() {
 
 			}
 		}
+		for (auto const& grenade : grenades) {
+			if (grenade->isOverlap(enemy) && enemy->state != game->stateDying
+				&& grenade->state == game->stateDead) {
+				bool gInList = std::find(deleteGrenades.begin(),
+					deleteGrenades.end(),
+					grenade) != deleteGrenades.end();
+
+				if (!gInList) {
+					deleteGrenades.push_back(grenade);
+				}
+
+
+				enemy->impacted();
+				points++;
+				textPoints->content = to_string(points);
+
+			}
+		}
 	}
 
 	for (auto const& enemy : enemies) {
@@ -392,6 +460,24 @@ void GameLayer::update() {
 			}
 		}
 	}
+
+	for (auto const& grenade : grenades) {
+		if (grenade->state == game->stateDead) {
+			bool gInList = std::find(deleteGrenades.begin(),
+				deleteGrenades.end(),
+				grenade) != deleteGrenades.end();
+
+			if (!gInList) {
+				deleteGrenades.push_back(grenade);
+			}
+		}
+	}
+
+	for (auto const& delRes : deleteResources) {
+		resources.remove(delRes);
+		space->removeDynamicActor(delRes);
+	}
+	deleteResources.clear();
 
 	for (auto const& delMine : deleteMines) {
 		mines.remove(delMine);
@@ -410,6 +496,12 @@ void GameLayer::update() {
 		space->removeDynamicActor(delProjectile);
 	}
 	deleteProjectiles.clear();
+
+	for (auto const& delGrenade : deleteGrenades) {
+		grenades.remove(delGrenade);
+		space->removeDynamicActor(delGrenade);
+	}
+	deleteGrenades.clear();
 
 
 	cout << "update GameLayer" << endl;
@@ -457,6 +549,14 @@ void GameLayer::draw() {
 	for (auto const& projectile : projectiles) {
 		if(projectile->lifetime > projectile->minLifetimeToBePainted)
 			projectile->draw(scrollX, scrollY);
+	}
+
+	for (auto const& grenade : grenades) {
+		grenade->draw(scrollX, scrollY);
+	}
+
+	for (auto const& resource : resources) {
+		resource->draw(scrollX, scrollY);
 	}
 
 	player->draw(scrollX, scrollY);
@@ -518,10 +618,12 @@ void GameLayer::keysToControls(SDL_Event event) {
 		case SDLK_SPACE: // dispara
 			controlShoot = true;
 			break;
+		case SDLK_g: // granada
+			controlGrenade = true;
+			break;
 		}
-
-
 	}
+
 	if (event.type == SDL_KEYUP) {
 		int code = event.key.keysym.sym;
 		// Levantada
@@ -548,6 +650,9 @@ void GameLayer::keysToControls(SDL_Event event) {
 			break;
 		case SDLK_SPACE: // dispara
 			controlShoot = false;
+			break;
+		case SDLK_g: 
+			controlGrenade = false;
 			break;
 		}
 

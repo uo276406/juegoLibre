@@ -8,6 +8,7 @@ Player::Player(float x, float y, Game* game)
 	state = game->stateMoving;
 	audioShoot = new Audio("res/disparo.wav", false);
 	audioKnife = new Audio("res/cuchillo_desenfundar.wav", false);
+	audioReload = new Audio("res/Reload_Gun.wav", false);
 
 	aShootingRight = new Animation("res/Soldado Pistola/Derecha/animacion_disparo_derecha.png",
 		width, height, 200, 50, 6, 4, false, game);
@@ -40,7 +41,6 @@ Player::Player(float x, float y, Game* game)
 	animation = aIdleRight;
 
 }
-
 
 void Player::update() {
 	//Se terminan las vidas pasa a morir
@@ -250,4 +250,33 @@ void Player::setDead() {
 
 void Player::setDying() {
 	state = game->stateDying;
+}
+
+void Player::reload() {
+	this->shootsAvailable = reloadingValue;
+	this->grenadesAvailable = 2;
+	audioReload->play();
+}
+
+Grenade* Player::throwGrenade() {
+	if (state != game->stateShooting &&
+		state != game->stateJumping && vx == 0) {
+		if (grenadesAvailable > 0) {
+			Grenade* grenade = new Grenade(x, y, game);
+			grenade->onAir = true;
+
+			if (orientation == game->orientationLeft) {
+				grenade->vx = grenade->vx * -1;
+			}
+		
+			grenadesAvailable--;
+			cout << grenadesAvailable;
+
+			return grenade;
+		}
+		
+	}
+	else {
+		return NULL;
+	}
 }

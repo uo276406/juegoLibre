@@ -14,38 +14,6 @@ Enemy::Enemy(string filename, float x, float y, Game* game)
 }
 
 void Enemy::update() {
-	// Actualizar la animación
-	bool endAnimation = animation->update();
-
-	// Acabo la animación, no sabemos cual
-	if (endAnimation) {
-		// Estaba muriendo
-		if (state == game->stateDying) {
-			state = game->stateDead;
-		}
-	}
-
-
-	if (state == game->stateMoving) {
-		animation = aMoving;
-	}
-	if (state == game->stateDying) {
-		animation = aDying;
-	}
-
-	// Establecer velocidad
-	if (state != game->stateDying) {
-		// no está muerto y se ha quedado parado
-		if (vx == 0) {
-			vxIntelligence = vxIntelligence * -1;
-			vx = vxIntelligence;
-		}
-	}
-	else {
-		vx = 0;
-	}
-
-
 
 }
 

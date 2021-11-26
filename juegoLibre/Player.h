@@ -4,6 +4,7 @@
 #include "Projectile.h" 
 #include "Audio.h"
 #include "Animation.h" // incluir animacion 
+#include "Grenade.h"
 
 class Player : public Actor
 {
@@ -46,5 +47,12 @@ public:
 	Audio* audioKnife;
 	int shootCadence = 30;
 	int shootTime = 0;
+
+	void reload();
+	int const reloadingValue = 5;
+	Audio* audioReload;
+
+	Grenade* throwGrenade();
+	int grenadesAvailable = 2;
 };
 
