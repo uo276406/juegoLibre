@@ -361,7 +361,7 @@ void GameLayer::update() {
 
 	for (auto const& mine : mines) {
 		//Jugador overlapea con una mina
-		if (mine->isOverlap(player) && mine->isIdle()) {
+		if (player->isOverlap(mine) && mine->isIdle()) {
 			mine->setExploding();
 		}
 

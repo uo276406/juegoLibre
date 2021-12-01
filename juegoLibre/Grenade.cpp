@@ -16,10 +16,10 @@ Grenade::Grenade(float x, float y, Game* game) :
 
 bool Grenade::isOverlap(Actor* actor) {
 	bool overlap = false;
-	if (actor->x - actor->width / 2 <= x + 4*width / 2
-		&& actor->x + actor->width / 2 >= x - 0.5*width / 2
-		&& actor->y + actor->height / 2 >= y - 0.5*height / 2
-		&& actor->y - actor->height / 2 <= y + 4*height / 2) {
+	if (actor->x - actor->width / 2 <= (x + width / 2) + 4
+		&& actor->x + actor->width / 2 >= (x - width / 2) - 4
+		&& actor->y + actor->height / 2 >= (y - height / 2) - 4
+		&& actor->y - actor->height / 2 <= (y + height / 2) + 4) {
 
 		overlap = true;
 	}

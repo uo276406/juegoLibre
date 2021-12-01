@@ -22,6 +22,8 @@ JumpEnemy::JumpEnemy(float x, float y, Game* game)
 
 void JumpEnemy::update() {
 
+	jump();
+
 	// Actualizar la animación
 	bool endAnimation = animation->update();
 
@@ -74,4 +76,13 @@ void JumpEnemy::update() {
 
 void JumpEnemy::draw(float scrollX, float scrollY) {
 	animation->draw(x - scrollX, y - scrollY);
+}
+
+void JumpEnemy::jump() {
+	if (jumpInterval == 0 && state != game->stateDying) {
+		vy = -16;
+		jumpInterval = 120;
+	}
+
+	jumpInterval--;
 }

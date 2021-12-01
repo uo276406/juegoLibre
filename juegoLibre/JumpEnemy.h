@@ -9,6 +9,10 @@ public:
 
     void draw(float scrollX, float scrollY) override;
 
+    void jump();
+
+    int jumpInterval = 120;
+
     int orientation;
     Animation* aDyingRight;
     Animation* aDyingLeft;
