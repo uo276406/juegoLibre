@@ -5,7 +5,8 @@ Grenade::Grenade(float x, float y, Game* game) :
 	vx = 6;
 	vy = -10; // La gravedad inicial es 1
 
-	audioExplode = new Audio("res/explosion_11.wav", false);
+	//audioExplode = new Audio("res/explosion_11.wav", false);
+	audioExplode = game->getAudioSound("res / explosion_11.wav", false);
 
 	animation = new Animation("res/Bomba/animacion_bomba_explosion.png",
 		width, height, 525, 75, 6, 7, false, game);

@@ -14,6 +14,8 @@ using namespace std;
 #define HEIGHT 320
 
 #include "Layer.h"
+#include "Audio.h"
+
 class Layer;
 
 class Game
@@ -35,6 +37,9 @@ public:
 	Layer* menuLayer;
 	Layer* gameLayer;
 
+	Audio* getAudioSound(string filename, bool loop);
+	map<string, Audio*> mapAudios; // map - cache
+
 	int currentLevel = 0;
 	int finalLevel = 1;
 
@@ -53,6 +58,5 @@ public:
 	int const inputKeyboard = 1;
 	int const inputMouse = 2;
 	int const inputGamePad = 3;
-
 
 };

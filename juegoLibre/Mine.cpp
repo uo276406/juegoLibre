@@ -6,7 +6,8 @@ Mine::Mine(float x, float y, Game* game) :
 	this->y = y;
 	this->state = game->stateIdle;
 
-	audioExplode = new Audio("res/Explosion_11.wav", false);
+	//audioExplode = new Audio("res/Explosion_11.wav", false);
+	audioExplode = game->getAudioSound("res/Explosion_11.wav", false);
 
 	animation = new Animation("res/Mina/mina.png",
 		width, height, 50, 30, 0, 1, false, game);
@@ -15,6 +16,19 @@ Mine::Mine(float x, float y, Game* game) :
 		width, height, 400, 30, 4, 8, false, game);
 
 }
+
+bool Mine::isOverlap(Actor* actor) {
+	bool overlap = false;
+	if (actor->x - actor->width / 2 <= x + 4 * width / 2
+		&& actor->x + actor->width / 2 >= x - 0.5 * width / 2
+		&& actor->y + actor->height / 2 >= y - 0.5 * height / 2
+		&& actor->y - actor->height / 2 <= y + 4 * height / 2) {
+
+		overlap = true;
+	}
+	return overlap;
+}
+
 
 void Mine::update() {
 

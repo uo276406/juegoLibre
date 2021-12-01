@@ -6,9 +6,13 @@ Player::Player(float x, float y, Game* game)
 	onAir = false;
 	orientation = game->orientationRight;
 	state = game->stateMoving;
-	audioShoot = new Audio("res/disparo.wav", false);
-	audioKnife = new Audio("res/cuchillo_desenfundar.wav", false);
-	audioReload = new Audio("res/Reload_Gun.wav", false);
+	//audioShoot = new Audio("res/disparo.wav", false);
+	//audioKnife = new Audio("res/cuchillo_desenfundar.wav", false);
+	//audioReload = new Audio("res/Reload_Gun.wav", false);
+
+	audioShoot = game->getAudioSound("res/disparo.wav", false);
+	audioKnife = game->getAudioSound("res/cuchillo_desenfundar.wav", false);
+	audioReload = game->getAudioSound("res/Reload_Gun.wav", false);
 
 	aShootingRight = new Animation("res/Soldado Pistola/Derecha/animacion_disparo_derecha.png",
 		width, height, 200, 50, 6, 4, false, game);

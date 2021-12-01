@@ -6,6 +6,8 @@ using namespace std;
 #include <SDL.h>;
 #include <SDL_mixer.h> // libreria de audio
 
+#include <map> 
+
 class Audio
 {
 public:

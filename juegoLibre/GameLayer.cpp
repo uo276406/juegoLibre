@@ -18,7 +18,8 @@ void GameLayer::init() {
 	scrollY = 0;
 	tiles.clear();
 
-	audioBackground = new Audio("res/jungla_ambiente.mp3", true);
+	//audioBackground = new Audio("res/jungla_ambiente.mp3", true);
+	audioBackground = game->getAudioSound("res/jungla_ambiente.mp3", true);
 	audioBackground->play();
 
 	points = 0;
@@ -91,6 +92,8 @@ void GameLayer::loadMapObject(char character, float x, float y)
 
 		initLifes(player);
 		initShoots(player);
+		initGrenades(player);
+
 		// modificación para empezar a contar desde el suelo.
 		player->y = player->y - player->height / 2;
 		space->addDynamicActor(player);
@@ -133,6 +136,15 @@ void GameLayer::initShoots(Player* player) {
 		WIDTH * 0.42, HEIGHT * 0.1, 20, 20, game);
 }
 
+void GameLayer::initGrenades(Player* player) {
+	numGrenades = player->grenadesAvailable;
+	textGrenades = new Text("hola", WIDTH * 0.32, HEIGHT * 0.1, game);
+	textGrenades->content = to_string(numGrenades);
+
+	grenadesIcon = new Actor("res/Bomba/bomba.png",
+		WIDTH * 0.24, HEIGHT * 0.1, 30, 30, game);
+}
+
 void GameLayer::processControls() {
 	// obtener controles
 	SDL_Event event;
@@ -169,6 +181,9 @@ void GameLayer::processControls() {
 	//Lanzar granada
 	if (controlGrenade) {
 		Grenade* newGrenade = player->throwGrenade();
+		numGrenades = player->grenadesAvailable;
+		textGrenades->content = to_string(numGrenades);
+		
 		if (newGrenade != NULL) {
 			space->addDynamicActor(newGrenade);
 			grenades.push_back(newGrenade);
@@ -384,6 +399,8 @@ void GameLayer::update() {
 			player->reload();
 			shoots = player->shootsAvailable;
 			textShootsAvailable->content = to_string(shoots);
+			numGrenades = player->grenadesAvailable;
+			textGrenades->content = to_string(numGrenades);
 			
 			bool rInList = std::find(deleteResources.begin(),
 				deleteResources.end(),
@@ -577,6 +594,9 @@ void GameLayer::draw() {
 
 	textShootsAvailable->draw();
 	shootsIcon->draw();
+
+	textGrenades->draw();
+	grenadesIcon->draw();
 
 	//textPointsRecolectable->draw();
 	//recolectable->draw();

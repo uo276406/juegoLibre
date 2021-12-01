@@ -77,7 +77,7 @@ public:
 	int shoots;
 	Actor* shootsIcon;
 
-	int const pointsToPassLevel = 5;
+	int const pointsToPassLevel = 3;
 
 	list<Mine*> mines;
 
@@ -87,6 +87,11 @@ public:
 
 	bool controlGrenade = false;
 	list<Grenade*> grenades;
+	Text* textGrenades;
+	int numGrenades;
+	Actor* grenadesIcon;
+	void initGrenades(Player* player);
+
 
 };
 

@@ -21,5 +21,7 @@ public:
 	bool isIdle();
 	bool hasExploded();
 	void draw(float scrollX, float scrollY);
+	bool isOverlap(Actor* actor) override;
+
 };
 

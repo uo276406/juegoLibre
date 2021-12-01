@@ -93,6 +93,19 @@ SDL_Texture* Game::getTexture(string filename) {
 	return mapTextures[filename];
 }
 
+Audio* Game::getAudioSound(string filename, bool loop) {
+	if (mapAudios.find(filename) != mapAudios.end()) {
+		cout << "retorno recurso cacheado" << filename << endl;
+	}
+	else {
+		cout << "Nuevo hay que cachearlo " << filename << endl;
+		Audio* toCreate = new Audio(filename, loop);
+		mapAudios[filename] = toCreate;
+	}
+
+	return mapAudios[filename];
+}
+
 
 
 
